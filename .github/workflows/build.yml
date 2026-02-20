@@ -69,4 +69,4 @@ jobs:
         with:
           name: FBMWebApp-Windows-EXE
           path: ./published-win/
-          retention-days: 30
+          retention-days: 31
