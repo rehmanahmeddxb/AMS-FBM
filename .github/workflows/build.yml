@@ -43,7 +43,7 @@ jobs:
 
       # ── STEP 4: Restore NuGet packages ─────────────
       - name: 📦 Restore Packages
-        run: dotnet restore AMS-FBM/FbmWebApp.csproj
+        run: dotnet restore FbmWebApp.csproj
 
       # ── STEP 5: Build & Publish Windows EXE ────────
       # -f net8.0-windows10.0.19041.0  ← your target framework
@@ -52,7 +52,7 @@ jobs:
       # -p:EnableMsixTooling=false      ← gives EXE, not MSIX package
       - name: 🔨 Build Windows App
         run: |
-          dotnet publish AMS-FBM/FbmWebApp.csproj `
+          dotnet publish FbmWebApp.csproj `
             -f net8.0-windows10.0.19041.0 `
             -c Release `
             -r win-x64 `
