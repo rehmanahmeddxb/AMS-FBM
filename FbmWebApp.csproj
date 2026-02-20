@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <!-- Root PropertyGroup: Common Settings -->
   <PropertyGroup>
     <TargetFrameworks>net8.0-android;net8.0-windows10.0.19041.0</TargetFrameworks>
     <OutputType>Exe</OutputType>
@@ -12,23 +13,47 @@
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
 
-    <!-- Windows Target -->
-    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
-    <WindowsPackageType Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">None</WindowsPackageType>
-    <EnableMsixTooling Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">false</EnableMsixTooling>
-    <RuntimeIdentifiers Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">win-x64</RuntimeIdentifiers>
-
-    <!-- Skip MAUI implicit package validation -->
+    <!-- Skip MAUI implicit package validation to prevent MA002 warning -->
     <SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
+
+    <!-- Windows Platform Minimum Version -->
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <!-- MAUI Controls Required in .NET 8 -->
-    <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.100" />
+  <!-- Android-specific Configuration -->
+  <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <AndroidMinimumVersion>26</AndroidMinimumVersion>
+    <AndroidTargetSdkVersion>35</AndroidTargetSdkVersion>
+  </PropertyGroup>
 
-    <!-- App Resources -->
+  <!-- Windows-specific Configuration: Self-Contained EXE (win-x64) -->
+  <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+    <WindowsPackageType>None</WindowsPackageType>
+    <EnableMsixTooling>false</EnableMsixTooling>
+    <GenerateAppxManifestIgnore>true</GenerateAppxManifestIgnore>
+    
+    <!-- Self-Contained EXE Settings -->
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <PublishTrimmed>true</PublishTrimmed>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishSingleFile>false</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+  </PropertyGroup>
+
+  <!-- NuGet Packages: MAUI and Dependencies -->
+  <ItemGroup>
+    <!-- Explicit MAUI.Controls for .NET 8 (fixes MA002 warning and type recognition) -->
+    <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.100" />
+    
+    <!-- Required MAUI Core Packages -->
+    <PackageReference Include="Microsoft.Maui.Controls.Hosting" Version="8.0.100" />
+  </ItemGroup>
+
+  <!-- App Design and Resources -->
+  <ItemGroup>
     <MauiIcon Include="Resources\AppIcon\appicon.svg" />
     <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#1b2631" Resize="true" />
   </ItemGroup>
+
 </Project>
