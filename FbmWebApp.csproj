@@ -11,22 +11,23 @@
     <ApplicationId>com.rehmanahmed.fbmwebapp</ApplicationId>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
-    
+
+    <!-- Windows Target -->
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
-
-    <!-- FIX for Windows EXE publish -->
     <WindowsPackageType Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">None</WindowsPackageType>
     <EnableMsixTooling Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">false</EnableMsixTooling>
-    
-    <!-- Skip MAUI implicit package validation (optional) -->
+    <RuntimeIdentifiers Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">win-x64</RuntimeIdentifiers>
+
+    <!-- Skip MAUI implicit package validation -->
     <SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- REQUIRED in .NET 8 -->
+    <!-- MAUI Controls Required in .NET 8 -->
     <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.100" />
 
+    <!-- App Resources -->
     <MauiIcon Include="Resources\AppIcon\appicon.svg" />
     <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#1b2631" Resize="true" />
   </ItemGroup>
