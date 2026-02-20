@@ -21,14 +21,14 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Install MAUI Windows Workload
-        run: dotnet workload install maui-windows
+      - name: Install All Required Workloads
+        run: dotnet workload install maui-windows maui-android
 
       - name: Restore Packages
         run: dotnet restore FbmWebApp.csproj -p:TargetFramework=net8.0-windows10.0.19041.0
 
       - name: Publish Windows App
-        run: dotnet publish FbmWebApp.csproj -f net8.0-windows10.0.19041.0 -c Release -r win-x64 --self-contained true -p:EnableMsixTooling=false -p:WindowsAppSDKSelfContained=true -o ./published-win
+        run: dotnet publish FbmWebApp.csproj -f net8.0-windows10.0.19041.0 -c Release -r win-x64 --self-contained true --no-restore -p:EnableMsixTooling=false -p:WindowsAppSDKSelfContained=true -o ./published-win
 
       - name: Upload EXE
         uses: actions/upload-artifact@v4
