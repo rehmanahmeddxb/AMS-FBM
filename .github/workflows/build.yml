@@ -10,25 +10,45 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-dotnet@v4
+      # 1. Checkout repository
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Setup .NET 8 SDK (matches your global.json)
+      - name: Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.100
+          dotnet-version: '8.0.x'
 
-      - name: Verify SDK
-        run: dotnet --version
+      # 3. Verify SDK version (optional, debug)
+      - name: Show SDK Info
+        run: |
+          dotnet --version
+          dotnet --list-sdks
 
+      # 4. Restore MAUI workloads
       - name: Restore MAUI Workloads
         run: dotnet workload restore
 
+      # 5. Restore project dependencies
       - name: Restore Project
-        run: dotnet restore
+        run: dotnet restore FbmWebApp.csproj
 
-      - name: Publish Windows
-        run: dotnet publish FbmWebApp.csproj -f net8.0-windows10.0.19041.0 -c Release -r win-x64 --self-contained true -o ./published-win
+      # 6. Publish Windows EXE
+      - name: Publish Windows App
+        run: |
+          dotnet publish FbmWebApp.csproj \
+            -f net8.0-windows10.0.19041.0 \
+            -c Release \
+            -r win-x64 \
+            --self-contained true \
+            -o ./published-win
 
-      - uses: actions/upload-artifact@v4
+      # 7. Upload EXE artifact
+      - name: Upload Windows EXE
+        uses: actions/upload-artifact@v4
         with:
           name: FBMWebApp-Windows-EXE
           path: ./published-win/
+          retention-days: 30
