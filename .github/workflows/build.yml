@@ -25,11 +25,11 @@ jobs:
         run: dotnet workload install maui-windows
 
       - name: "📦 Restore Packages (Windows only)"
-        run: dotnet restore AMS-FBM/AMS-FBM/FbmWebApp.csproj -f net8.0-windows10.0.19041.0
+        run: dotnet restore FbmWebApp.csproj -f net8.0-windows10.0.19041.0
 
       - name: "🔨 Publish Windows App"
         run: |
-          dotnet publish AMS-FBM/AMS-FBM/FbmWebApp.csproj `
+          dotnet publish FbmWebApp.csproj `
             -f net8.0-windows10.0.19041.0 `
             -c Release `
             -r win-x64 `
