@@ -13,32 +13,24 @@ jobs:
 
     steps:
 
-      - name: "📥 Checkout Code"
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: "⚙️ Setup .NET 8 SDK"
+      - name: Setup .NET 8 SDK
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
 
-      - name: "🔧 Install MAUI Windows Workload"
+      - name: Install MAUI Windows Workload
         run: dotnet workload install maui-windows
 
-      - name: "📦 Restore Packages (Windows only)"
-        run: dotnet restore FbmWebApp.csproj -f net8.0-windows10.0.19041.0
+      - name: Restore Packages
+        run: dotnet restore FbmWebApp.csproj -p:TargetFramework=net8.0-windows10.0.19041.0
 
-      - name: "🔨 Publish Windows App"
-        run: |
-          dotnet publish FbmWebApp.csproj `
-            -f net8.0-windows10.0.19041.0 `
-            -c Release `
-            -r win-x64 `
-            --self-contained true `
-            -p:EnableMsixTooling=false `
-            -p:WindowsAppSDKSelfContained=true `
-            -o ./published-win
+      - name: Publish Windows App
+        run: dotnet publish FbmWebApp.csproj -f net8.0-windows10.0.19041.0 -c Release -r win-x64 --self-contained true -p:EnableMsixTooling=false -p:WindowsAppSDKSelfContained=true -o ./published-win
 
-      - name: "⬆️ Upload EXE"
+      - name: Upload EXE
         uses: actions/upload-artifact@v4
         with:
           name: FBMWebApp-Windows-EXE
