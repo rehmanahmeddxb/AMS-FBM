@@ -1,0 +1,72 @@
+# ══════════════════════════════════════════════════
+# FBM WebApp — GitHub Actions Build Workflow
+# Builds for Windows x64 using .NET 8 MAUI
+# ══════════════════════════════════════════════════
+
+name: Build FBM WebApp (Windows EXE)
+
+# ── WHEN DOES THIS RUN? ─────────────────────────
+# Runs automatically on every code push, AND
+# you can also trigger it manually from GitHub UI
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:   # allows manual trigger from GitHub
+
+# ── THE JOB ─────────────────────────────────────
+jobs:
+
+  build-windows:
+    # CRITICAL: Must be Windows — MAUI Windows apps cannot
+    # be built on Linux or Mac!
+    runs-on: windows-latest
+
+    steps:
+
+      # ── STEP 1: Get your code ──────────────────────
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      # ── STEP 2: Install .NET 8 SDK ─────────────────
+      - name: ⚙️ Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      # ── STEP 3: Install MAUI workload ──────────────
+      # This is what gives .NET the ability to build
+      # Windows and Android apps
+      - name: 🔧 Install MAUI Workload
+        run: dotnet workload install maui-windows
+
+      # ── STEP 4: Restore NuGet packages ─────────────
+      - name: 📦 Restore Packages
+        run: dotnet restore AMS-FBM/FbmWebApp.csproj
+
+      # ── STEP 5: Build & Publish Windows EXE ────────
+      # -f net8.0-windows10.0.19041.0  ← your target framework
+      # -r win-x64                      ← 64-bit Windows
+      # --self-contained true           ← includes .NET runtime inside EXE
+      # -p:EnableMsixTooling=false      ← gives EXE, not MSIX package
+      - name: 🔨 Build Windows App
+        run: |
+          dotnet publish AMS-FBM/FbmWebApp.csproj `
+            -f net8.0-windows10.0.19041.0 `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            -p:EnableMsixTooling=false `
+            -p:WindowsAppSDKSelfContained=true `
+            -o ./published-win
+
+      # ── STEP 6: Upload EXE as downloadable artifact ─
+      # After this step, you'll see a "Artifacts" section
+      # on the GitHub Actions run page to download your EXE
+      - name: ⬆️ Upload Windows EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: FBMWebApp-Windows-EXE
+          path: ./published-win/
+          retention-days: 30
