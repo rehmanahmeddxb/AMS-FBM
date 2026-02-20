@@ -14,16 +14,19 @@ jobs:
 
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 8.0.100
+
+      - name: Verify SDK
+        run: dotnet --version
 
       - name: Restore MAUI Workloads
         run: dotnet workload restore
 
       - name: Restore Project
-        run: dotnet restore FbmWebApp.csproj -r win-x64 -p:TargetFramework=net8.0-windows10.0.19041.0
+        run: dotnet restore
 
       - name: Publish Windows
-        run: dotnet publish FbmWebApp.csproj -f net8.0-windows10.0.19041.0 -c Release -r win-x64 --self-contained true --no-restore -o ./published-win
+        run: dotnet publish FbmWebApp.csproj -f net8.0-windows10.0.19041.0 -c Release -r win-x64 --self-contained true -o ./published-win
 
       - uses: actions/upload-artifact@v4
         with:
